@@ -130,7 +130,7 @@ class LibraryURLTestCase(APITestCase):
         self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'books'}).__name__)
 
     def test_view_book_url(self):
-        url = reverse('book-view', kwargs={'book_id': 'Test City'})
+        url = reverse('book-view', kwargs={'book_id': 'book_id'})
         self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'view_book'}).__name__)
     
     def test_filter_books_url(self):
@@ -144,6 +144,10 @@ class LibraryURLTestCase(APITestCase):
     def test_add_book_url(self):
         url = reverse('book-add')
         self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'post': 'add_new_book'}).__name__)
+
+    def test_remove_book_url(self):
+        url = reverse('book-remove', kwargs={'book_id': 'book_id'})
+        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'post': 'remove_book'}).__name__)
 
 
 
@@ -185,7 +189,6 @@ class LibraryModelTest(TestCase):
 
     def test_book_str_representation(self):
         self.assertEqual(str(self.book), 'Lagos Boy')
-
 
     # User Model
     def test_user_creation(self):

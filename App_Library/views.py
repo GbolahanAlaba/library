@@ -42,9 +42,9 @@ class LibraryViewSets(viewsets.ModelViewSet):
 
     @handle_exceptions
     def books(self, request, *args, **kwargs):
-        obj = Book.objects.all().order_by("-created_at")
+        books = Book.objects.all().order_by("-created_at")
 
-        serializer = self.book_serializer_class(obj, many=True)
+        serializer = self.book_serializer_class(books, many=True)
         return Response({"status": "success", "message": "All Books", "data": serializer.data}, status=status.HTTP_200_OK)
 
 
@@ -94,13 +94,24 @@ class LibraryViewSets(viewsets.ModelViewSet):
         serializer = BorrowedBookSerializer(borrowed_book)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-
     @handle_exceptions
     def add_new_book(self, request, *args, **kwargs):
         serializer = self.book_serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"status": "success", "message": "Book added", "data": serializer.data}, status=status.HTTP_201_CREATED)
+    
+    @handle_exceptions
+    def remove_book(self, request, book_id, *args, **kwargs):
+        book = Book.objects.filter(book_id=book_id).first()
+
+        if not book:
+            return Response({"status": "failed", "message": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            book.delete()
+            return Response({"status": "success", "message": f"{book.title} book removed from catalogue"}, status=status.HTTP_201_CREATED)
+
+
 
     
 
