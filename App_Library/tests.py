@@ -82,7 +82,7 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_view_book_details_exists(self):
-        response = self.client.get(self.get_book_url(self.book_id), format='json')
+        response = self.client.get(self.view_book_url(self.book_id), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         book_data = response.data['data']
         self.assertEqual(book_data['title'], self.book.title)
@@ -92,12 +92,13 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(book_data['language'], str(self.book.language))
         self.assertEqual(book_data['category'], self.book.category)
         self.assertEqual(book_data['description'], self.book.description)
-
+    
     def test_view_book_details_not_exists(self):
-        response = self.client.get(self.get_book_url('hdhdjfjjf'), format='json')
+        invalid_book_id = '00000000-0000-0000-0000-000000000000'
+        response = self.client.get(self.view_book_url(invalid_book_id), format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data['status'], 'failed')
-        self.assertEqual(response.data['message'], 'book not found')
+        self.assertEqual(response.data['message'], 'Book not found')
 
     # User views
     def test_enroll_user_valid_payload(self):
@@ -126,9 +127,9 @@ class LibraryURLTestCase(APITestCase):
         url = reverse('all-books')
         self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'books'}).__name__)
 
-    def test_get_book_url(self):
-        url = reverse('get-book-detail', kwargs={'book_id': 'Test City'})
-        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'get_a_book'}).__name__)
+    def test_view_book_url(self):
+        url = reverse('book-view', kwargs={'book_id': 'Test City'})
+        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'view_book'}).__name__)
     
     def test_filter_books_url(self):
         url = reverse('books-filters')
