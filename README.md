@@ -17,9 +17,9 @@ This project is a Django-based application utilizing Django Rest Framework (DRF)
 Clone the Repository
 
 
-git clone https://github.com/GbolahanAlaba/sokosq-technical-assessment
+git clone https://github.com/GbolahanAlaba/library
 
-cd sokosq-technical-assessment
+cd library
 
 
 ## **Create Virtual Environment**
