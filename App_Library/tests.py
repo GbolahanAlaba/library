@@ -14,7 +14,27 @@ class BookViewSetTestCase(APITestCase):
         self.books_url = reverse('all-books')
         self.view_book_url = lambda book_id: reverse('book-view', kwargs={'book_id': book_id})
         self.enroll_user_url = reverse('user-enroll')
+
+        self.valid_user_payload = {
+            'first_name': 'Gbolahan',
+            'last_name': 'Alaba',
+            'email': 'gbolahan@gmal.com',
+        }
         
+        self.invalid_user_payload = {
+            'first_name': 'Gbolahan',
+            'last_name': 'Alaba',
+            'email': "gotten",
+        }
+
+        self.user = User.objects.create(
+            first_name='Gbolahan',
+            last_name='Alaba',
+            email='gbolahan@gmail.com',
+        )
+        self.user_id = str(self.user.user_id)
+
+
         self.valid_book_payload = {
             'title': 'Lagos Boy',
             'author': 'Vincent',
@@ -45,25 +65,6 @@ class BookViewSetTestCase(APITestCase):
             description='Sunny with clear skies'
         )
         self.book_id = str(self.book.book_id)
-
-        self.valid_user_payload = {
-            'first_name': 'Gbolahan',
-            'last_name': 'Alaba',
-            'email': 'gbolahan@gmal.com',
-        }
-        
-        self.invalid_user_payload = {
-            'first_name': 'Gbolahan',
-            'last_name': 'Alaba',
-            'email': "gotten",
-        }
-
-        self.user = User.objects.create(
-            first_name='Gbolahan',
-            last_name='Alaba',
-            email='gbolahan@gmail.com',
-        )
-        self.user_id = str(self.user.user_id)
 
     def test_enroll_user_valid_payload(self):
         response = self.client.post(self.enroll_user_url, data=self.valid_user_payload, format='json')
@@ -146,7 +147,7 @@ class LibraryURLTestCase(APITestCase):
 
 
 
-#  TEST FOR MODEL
+# #  TEST FOR MODEL
 class LibraryModelTest(TestCase):
     def setUp(self):
         self.book = Book.objects.create(
