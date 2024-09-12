@@ -81,7 +81,7 @@ class BookViewSetTestCase(APITestCase):
         response = self.client.post(self.add_book_url, data=self.invalid_book_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_view_book_detail_exists(self):
+    def test_view_book_details_exists(self):
         response = self.client.get(self.get_book_url(self.book_id), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         book_data = response.data['data']
@@ -93,7 +93,7 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(book_data['category'], self.book.category)
         self.assertEqual(book_data['description'], self.book.description)
 
-    def test_view_book_detail_not_exists(self):
+    def test_view_book_details_not_exists(self):
         response = self.client.get(self.get_book_url('hdhdjfjjf'), format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data['status'], 'failed')
