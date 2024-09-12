@@ -18,7 +18,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 @admin.register(BorrowedBook)
-class UserAdmin(admin.ModelAdmin):
+class BorrowedBookAdmin(admin.ModelAdmin):
     list_display = ['user', 'book', 'borrow_date', 'borrow_date']
     list_filter = ['user']
     search_fields = ['user']

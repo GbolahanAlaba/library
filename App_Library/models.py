@@ -48,4 +48,4 @@ class BorrowedBook(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.user.first_name} borrowed {self.book.title}'
+        return f'{self.user} borrowed {self.book.title}'

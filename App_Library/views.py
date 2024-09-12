@@ -78,27 +78,26 @@ class LibraryViewSets(viewsets.ModelViewSet):
         return Response({"status": "success", "message": "User enrolled", "data": serializer.data}, status=status.HTTP_201_CREATED)
 
 
-
-    @handle_exceptions
+    # @handle_exceptions
     def borrow_book(self, request, *args, **kwargs):
         full_name = request.data.get('full_name')
         book_id = request.data.get('book_id')
-        borrow_duration = request.data.get('borrow_days')
+        borrow_duration = request.data.get('borrow_duration')
 
         if not book_id or not borrow_duration:
             return Response({"status": "failed", "message": "Please provide both book_id and borrow_duration."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            book = Book.objects.get(id=book_id, available_copies__gt=0)
+            book = Book.objects.get(book_id=book_id, available_copies__gt=0)
         except Book.DoesNotExist:
-            return Response({"status": "succefailedss", "message": "Book not available or out of stock."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"status": "failed", "message": "Book not available or out of stock."}, status=status.HTTP_404_NOT_FOUND)
 
         # Calculate return date
         borrow_days = int(borrow_duration)
         return_date = timezone.now() + timedelta(days=borrow_days)
 
         # Create BorrowedBook instance
-        borrowed_book = BorrowedBook.objects.create(full_name=full_name, book=book, return_date=return_date)
+        borrowed_book = BorrowedBook.objects.create(user=full_name, book=book, return_date=return_date)
 
         serializer = BorrowedBookSerializer(borrowed_book)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
