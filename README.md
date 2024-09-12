@@ -84,7 +84,7 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
 - **Response**:
 
-```json
+  ```json
   {
     "status": "success",
     "message": "Book added",
@@ -187,7 +187,7 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
 - **Response**:
 
-```json
+  ```json
 
 
   {
