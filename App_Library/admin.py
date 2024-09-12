@@ -3,7 +3,7 @@ from . models import *
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ['title', 'author', 'publication_date', 'publisher', 'language', 'category', 'description']
+    list_display = ['title', 'author', 'publication_date', 'publisher', 'language', 'category', 'available_copies', 'description']
     list_filter = ['title']
     search_fields = ['title']
     ordering = ['-created_at']
