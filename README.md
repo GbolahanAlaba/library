@@ -63,6 +63,7 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 - `GET /books/`: Get all books data.
 - `GET /get-book/{book_id}/`: Retrieve book data for a specific book.
 - `POST /filter-books/`: Filter books bu=y author or category.
+- `POST /borrow-book/`: borrow books from the library.
 - `POST /enroll-user/`: Enroll user to library.
 
 ## **API Implementation**
@@ -161,11 +162,44 @@ You should now be able to access the application at http://127.0.0.1:8000/.
     }
   }
 
-
-
 `200 OK` with books data on success.
 
 `404 Not Found` if no data is available for the city.
+
+
+#### POST /borrow-book/
+
+- **Request Body**:
+
+  ```json
+  {
+    "full_name": "Gbolahan Alaba",
+    "book_id": "474f6ab2-7a46-427b-91d8-eeb1688a4766",
+    "duration": "10",
+   
+  }
+
+- **Response**:
+
+  ```json
+  {
+    "status": "success",
+    "message": "Book added",
+    "data": {
+        "book_id": "a4978918-3517-4699-a18f-5d07d19e4c43",
+        "title": "Gross Profit",
+        "author": "Bolanle",
+        "publication_date": "2024-09-12",
+        "publisher": "Ugo",
+        "language": "English",
+        "category": "Finance",
+        "description": "This is a new book"
+    }
+  }
+
+`201 Created` on success.
+
+`400 Bad Request` on validation error.
 
 
 #### GET /filter-books/{book_id}/
