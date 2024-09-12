@@ -65,21 +65,18 @@ class BookViewSetTestCase(APITestCase):
         )
         self.user_id = str(self.user.user_id)
 
-    def test_add_book_valid_payload(self):
-        response = self.client.post(self.add_book_url, data=self.valid_book_payload, format='json')
+    def test_enroll_user_valid_payload(self):
+        response = self.client.post(self.enroll_user_url, data=self.valid_user_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        book_data = response.data['data']
-        self.assertEqual(book_data['title'], self.valid_book_payload['title'])
-        self.assertEqual(book_data['author'], self.valid_book_payload['author'])
-        self.assertEqual(book_data['publication_date'], self.valid_book_payload['publication_date'])
-        self.assertEqual(book_data['publisher'], self.valid_book_payload['publisher'])
-        self.assertEqual(book_data['language'], self.valid_book_payload['language'])
-        self.assertEqual(book_data['category'], self.valid_book_payload['category'])
-        self.assertEqual(book_data['description'], self.valid_book_payload['description'])
-
-    def test_add_book_invalid_payload(self):
-        response = self.client.post(self.add_book_url, data=self.invalid_book_payload, format='json')
+        user_data = response.data['data']
+        self.assertEqual(user_data['first_name'], self.valid_user_payload['first_name'])
+        self.assertEqual(user_data['last_name'], self.valid_user_payload['last_name'])
+        self.assertEqual(user_data['email'], self.valid_user_payload['email'])
+       
+    def test_enroll_user_invalid_payload(self):
+        response = self.client.post(self.enroll_user_url, data=self.invalid_user_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
     def test_view_book_details_exists(self):
         response = self.client.get(self.view_book_url(self.book_id), format='json')
@@ -100,17 +97,21 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(response.data['status'], 'failed')
         self.assertEqual(response.data['message'], 'Book not found')
 
-    # User views
-    def test_enroll_user_valid_payload(self):
-        response = self.client.post(self.enroll_user_url, data=self.valid_user_payload, format='json')
+    
+    def test_add_book_valid_payload(self):
+        response = self.client.post(self.add_book_url, data=self.valid_book_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        user_data = response.data['data']
-        self.assertEqual(user_data['first_name'], self.valid_user_payload['first_name'])
-        self.assertEqual(user_data['last_name'], self.valid_user_payload['last_name'])
-        self.assertEqual(user_data['email'], self.valid_user_payload['email'])
-       
-    def test_enroll_user_invalid_payload(self):
-        response = self.client.post(self.enroll_user_url, data=self.invalid_user_payload, format='json')
+        book_data = response.data['data']
+        self.assertEqual(book_data['title'], self.valid_book_payload['title'])
+        self.assertEqual(book_data['author'], self.valid_book_payload['author'])
+        self.assertEqual(book_data['publication_date'], self.valid_book_payload['publication_date'])
+        self.assertEqual(book_data['publisher'], self.valid_book_payload['publisher'])
+        self.assertEqual(book_data['language'], self.valid_book_payload['language'])
+        self.assertEqual(book_data['category'], self.valid_book_payload['category'])
+        self.assertEqual(book_data['description'], self.valid_book_payload['description'])
+
+    def test_add_book_invalid_payload(self):
+        response = self.client.post(self.add_book_url, data=self.invalid_book_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -119,9 +120,9 @@ class BookViewSetTestCase(APITestCase):
 # TEST FOR URLS
 class LibraryURLTestCase(APITestCase):
     # Books
-    def test_add_book_url(self):
-        url = reverse('book-add')
-        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'post': 'add_new_book'}).__name__)
+    def test_enroll_user_url(self):
+        url = reverse('user-enroll')
+        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'post': 'enroll_user'}).__name__)
 
     def test_all_book_url(self):
         url = reverse('all-books')
@@ -135,12 +136,13 @@ class LibraryURLTestCase(APITestCase):
         url = reverse('books-filters')
         self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'filter_books'}).__name__)
 
-
-    # Users
-    def test_enroll_user_url(self):
-        url = reverse('user-enroll')
-        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'post': 'enroll_user'}).__name__)
-
+    def test_borrow_book_url(self):
+        url = reverse('book-borrow')
+        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'post': 'borrow_book'}).__name__)
+    
+    def test_add_book_url(self):
+        url = reverse('book-add')
+        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'post': 'add_new_book'}).__name__)
 
 
 
@@ -163,7 +165,14 @@ class LibraryModelTest(TestCase):
             email='gbolahan@gmail.com',
         )
 
-    # Book
+        self.borrow_book = BorrowedBook.objects.create(
+            user='Gbolahan Alaba',
+            book=self.book,
+            borrow_date=timezone.now(),
+            return_date=timezone.now() + timezone.timedelta(days=7)
+        )
+
+    # Book Model
     def test_book_creation(self):
         self.assertEqual(self.book.title, 'Lagos Boy')
         self.assertEqual(self.book.author, 'Vincent')
@@ -177,11 +186,19 @@ class LibraryModelTest(TestCase):
         self.assertEqual(str(self.book), 'Lagos Boy')
 
 
-    # User
+    # User Model
     def test_user_creation(self):
         self.assertEqual(self.user.first_name, 'Gbolahan')
         self.assertEqual(self.user.last_name, 'Alaba')
         self.assertEqual(self.user.email, 'gbolahan@gmail.com')
+
+    def test_user_str_representation(self):
+        self.assertEqual(str(self.user), 'Gbolahan')
+
+    # Borrow Book Model
+    def test_user_creation(self):
+        self.assertEqual(self.borrow_book.user, 'Gbolahan Alaba')
+        self.assertEqual(self.borrow_book.book.title, 'Lagos Boy')
 
     def test_user_str_representation(self):
         self.assertEqual(str(self.user), 'Gbolahan')

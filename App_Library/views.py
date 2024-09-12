@@ -39,7 +39,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
         serializer.save()
         return Response({"status": "success", "message": "User enrolled", "data": serializer.data}, status=status.HTTP_201_CREATED)
     
-    
+
     @handle_exceptions
     def books(self, request, *args, **kwargs):
         obj = Book.objects.all().order_by("-created_at")
@@ -86,7 +86,6 @@ class LibraryViewSets(viewsets.ModelViewSet):
             book = Book.objects.get(book_id=book_id, available_copies__gt=0)
         except Book.DoesNotExist:
             return Response({"status": "failed", "message": "Book not available or out of stock."}, status=status.HTTP_404_NOT_FOUND)
-
 
         borrow_days = int(borrow_duration)
         return_date = timezone.now() + timedelta(days=borrow_days)

@@ -59,12 +59,13 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
 ## **API Endpoints**
 
-- `POST /add-book/`: Add new book data.
+- `POST /enroll-user/`: Enroll user to library.
 - `GET /books/`: Get all books data.
 - `GET /get-book/{book_id}/`: Retrieve book data for a specific book.
 - `POST /filter-books/`: Filter books bu=y author or category.
 - `POST /borrow-book/`: borrow books from the library.
-- `POST /enroll-user/`: Enroll user to library.
+- `POST /add-book/`: Add new book data.
+
 
 ## **API Implementation**
 
