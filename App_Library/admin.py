@@ -15,3 +15,11 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ['first_name']
     search_fields = ['first_name']
     ordering = ['-created_at']
+
+
+@admin.register(BorrowedBook)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ['user', 'book', 'borrow_date', 'borrow_date']
+    list_filter = ['user']
+    search_fields = ['user']
+    ordering = ['-borrow_date']

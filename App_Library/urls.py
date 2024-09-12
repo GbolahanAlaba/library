@@ -9,6 +9,7 @@ urlpatterns = [
    path('books/', LibraryViewSets.as_view({"get": "books"}), name='all-books'),
    path('view-book/<str:book_id>/', LibraryViewSets.as_view({"get": "view_book"}), name='book-view'),
    path('filter-books/', LibraryViewSets.as_view({"get": "filter_books"}), name='books-filters'),
+   path('borrow-book/', LibraryViewSets.as_view({"post": "borrow_book"}), name='book-borrow'),
 
    path('enroll-user/', LibraryViewSets.as_view({"post": "enroll_user"}), name='user-enroll'),
 ]

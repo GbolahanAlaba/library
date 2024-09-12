@@ -15,6 +15,7 @@ class Book(models.Model):
     description = models.TextField(blank=True, null=True)
     language = models.CharField(max_length=30, blank=True, null=True)
     category = models.CharField(max_length=100, blank=True, null=True)
+    available_copies = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -32,3 +33,19 @@ class User(models.Model):
 
     def __str__(self):
         return self.first_name
+
+class BorrowedBook(models.Model):
+    user = models.CharField(max_length=255)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    borrow_date = models.DateTimeField(default=timezone.now)
+    return_date = models.DateTimeField()
+    
+    def save(self, *args, **kwargs):
+        # Reduce the number of available copies when a book is borrowed
+        if not self.pk:
+            self.book.available_copies -= 1
+            self.book.save()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.user.first_name} borrowed {self.book.title}'

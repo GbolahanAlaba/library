@@ -14,3 +14,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['user_id', 'first_name', 'last_name', 'email', 'created_at']
+
+
+class BorrowedBookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BorrowedBook
+        fields = ['id', 'user', 'book', 'borrow_date', 'return_date']
