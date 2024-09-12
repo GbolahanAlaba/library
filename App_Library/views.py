@@ -46,7 +46,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
         return Response({"status": "success", "message": "All Books", "data": serializer.data}, status=status.HTTP_200_OK)
 
     @handle_exceptions
-    def get_a_book(self, request, book_id, *args, **kwargs):
+    def view_book(self, request, book_id, *args, **kwargs):
         book = Book.objects.filter(book_id=book_id).first()
 
         if not book:
@@ -64,8 +64,9 @@ class LibraryViewSets(viewsets.ModelViewSet):
             self.queryset = self.queryset.filter(author__icontains=author)
         if category:
             self.queryset = self.queryset.filter(category__icontains=category)
-
-        return super().list(request, *args, **kwargs)
+        
+        serializer = self.book_serializer_class(self.queryset, many=True)
+        return Response({"status": "success", "message": "All books", "data":serializer.data}, status=status.HTTP_200_OK)
     
 
     @handle_exceptions

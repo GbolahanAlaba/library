@@ -12,7 +12,7 @@ class BookViewSetTestCase(APITestCase):
         self.client = APIClient()
         self.add_book_url = reverse('book-add')
         self.books_url = reverse('all-books')
-        self.get_book_url = lambda book_id: reverse('get-book-detail', kwargs={'book_id': book_id})
+        self.view_book_url = lambda book_id: reverse('book-view', kwargs={'book_id': book_id})
         self.enroll_user_url = reverse('user-enroll')
         
         self.valid_book_payload = {
@@ -99,7 +99,7 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(response.data['status'], 'failed')
         self.assertEqual(response.data['message'], 'book not found')
 
-
+    # User views
     def test_enroll_user_valid_payload(self):
         response = self.client.post(self.enroll_user_url, data=self.valid_user_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

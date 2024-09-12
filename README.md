@@ -3,7 +3,7 @@
 
 ## **Overview**
 
-This project is a Django-based application utilizing Django Rest Framework (DRF) to create a basic weather API that interacts with a SQL database to store and retrieve weather data. The API allows users to add new weather data and retrieve weather data for a specific city.
+This project is a Django-based application utilizing Django Rest Framework (DRF) to create a basic Library API that interacts with a SQL database to store and retrieve books and enroll library users data. The API allows users to add and retrieve books, all books, enroll users.
 
 ## **Prerequisites**
 
@@ -33,7 +33,7 @@ It's recommended to use a virtual environment to manage dependencies:
 
 MAC `source venv/bin/activate`
 
-Windows `venv\Scripts\activate`
+Windows `venv/Scripts/activate`
 
 ## **Install Dependencies**
 
@@ -55,16 +55,19 @@ Apply the migrations to set up your database schema:
 Start the development server to verify everything is set up correctly:
 
 `python manage.py runserver`
-You should now be able to access the application at http://127.0.0.1:8000/library.
+You should now be able to access the application at http://127.0.0.1:8000/.
 
 ## **API Endpoints**
 
-- `POST /weather`: Add new weather data.
-- `GET /weather/{city}`: Retrieve weather data for a specific city.
+- `POST /add-book/`: Add new book data.
+- `GET /books/`: Get all books data.
+- `GET /get-book/{book_id}/`: Retrieve book data for a specific book.
+- `POST /filter-books/`: Filter books bu=y author or category.
+- `POST /enroll-user/`: Enroll user to library.
 
 ## **API Implementation**
 
-#### POST /add-book
+#### POST /add-book/
 
 - **Request Body**:
 
@@ -97,12 +100,12 @@ You should now be able to access the application at http://127.0.0.1:8000/librar
     }
   }
 
-`201 Created` on success.
+  - `201 Created` on success.
 
-`400 Bad Request` on validation error.
+  - `400 Bad Request` on validation error.
 
 
-#### GET /books
+#### GET /books/
 
 - **Response**:
 
@@ -132,12 +135,76 @@ You should now be able to access the application at http://127.0.0.1:8000/librar
             "description": "This is a new book"
         },
     ]
-}
+  }
 
 
-- `200 OK` with weather data on success.
+  - `200 OK` with books data on success.
 
-- `404 Not Found` if no data is available for the city.
+
+#### GET /view-book/{book_id}/
+
+- **Response**:
+
+  ```json
+  {
+    "status": "success",
+    "message": "Gross Profit",
+    "data": {
+        "book_id": "e4aebf09-ad6f-489b-9a0e-395d4d6ff408",
+        "title": "Gross Profit",
+        "author": "Bolanle",
+        "publication_date": "2024-09-12",
+        "publisher": "Ugo",
+        "language": "English",
+        "category": "Finance",
+        "description": "This is a new book"
+    }
+  }
+
+
+  - `200 OK` with books data on success.
+
+  - `404 Not Found` if no data is available for the city.
+
+
+#### GET /filter-books/{book_id}/
+
+- **Response**:
+
+  ```json
+
+#### POST /enroll-user/
+
+- **Request Body**:
+
+  ```json
+  {
+    "first_name": "Gbolahan",
+    "last_name": "Alaba",
+    "email": "gbolahan@gmail.com",
+  }
+
+- **Response**:
+
+```json
+
+
+  {
+    "status": "success",
+    "message": "User enrolled",
+    "data": {
+        "user_id": "7903ed92-9037-4bcc-b863-f60b7f807e25",
+        "first_name": "Gbolahan",
+        "last_name": "Alaba",
+        "email": "gb0lahan@gmainl.com",
+        "created_at": "2024-09-12T13:03:55.089390Z"
+    }
+  }
+
+  - `201 Created` on success.
+
+  - `400 Bad Request` on validation error.
+
 
 ## **Testing**
 Run a tests to ensure the API endpoints work as expected.
