@@ -1,5 +1,5 @@
 
-# **Simple Weather API**
+# **Library API**
 
 ## **Overview**
 
