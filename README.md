@@ -65,7 +65,8 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 - `POST /filter-books/`: Filter books bu=y author or category.
 - `POST /borrow-book/`: borrow books from the library.
 - `POST /add-book/`: Add new book data.
-- `POST /remove-book/{book_id}/`: Remove book.
+- `DELETE /remove-book/{book_id}/`: Remove book.
+- `GET /users/`: Users.
 
 
 ## **API Implementation**
@@ -262,6 +263,36 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 `200 OK` with books data on success.
 
 `404 Not Found` if no data is available for the city.
+
+#### GET /users/
+
+- **Response**:
+
+  ```json
+  {
+    "status": "success",
+    "message": "All library users",
+    "data": [
+        {
+            "user_id": "fbc5a061-4345-40ca-877b-59300e9ebcc8",
+            "first_name": "Dorcas",
+            "last_name": "Alaba",
+            "email": "dorcas@gmainl.com",
+            "created_at": "2024-09-12T19:29:46.361493Z"
+        },
+        {
+            "user_id": "9174abc5-aff7-4114-8d9b-2d04e38eccef",
+            "first_name": "Gbolahan",
+            "last_name": "Alaba",
+            "email": "gb0lahan@gmainl.com",
+            "created_at": "2024-09-12T19:24:42.524067Z"
+        }
+    ]
+  }
+
+
+`200 OK` with books data on success.
+
 
 
 ## **Testing**

@@ -165,6 +165,10 @@ class LibraryURLTestCase(APITestCase):
         url = reverse('book-remove', kwargs={'book_id': 'book_id'})
         self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'post': 'remove_book'}).__name__)
 
+    def test_users_url(self):
+        url = reverse('library-users')
+        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'users'}).__name__)
+
 
 
 # #  TEST FOR MODEL

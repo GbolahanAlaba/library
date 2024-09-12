@@ -13,6 +13,6 @@ urlpatterns = [
 
    path('add-book/', LibraryViewSets.as_view({"post": "add_new_book"}), name='book-add'),
    path('remove-book/<str:book_id>/', LibraryViewSets.as_view({"delete": "remove_book"}), name='book-remove'),
-
+   path('users/', LibraryViewSets.as_view({"get": "users"}), name='library-users'),
    
 ]

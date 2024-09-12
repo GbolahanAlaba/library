@@ -112,6 +112,12 @@ class LibraryViewSets(viewsets.ModelViewSet):
             return Response({"status": "success", "message": f"{book.title} book removed from catalogue"}, status=status.HTTP_201_CREATED)
 
 
+    @handle_exceptions
+    def users(self, request, *args, **kwargs):
+        users = User.objects.all().order_by("-created_at")
+
+        serializer = self.user_serializer_class(users, many=True)
+        return Response({"status": "success", "message": "All library users", "data": serializer.data}, status=status.HTTP_201_CREATED)
 
     
 
