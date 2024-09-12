@@ -100,9 +100,9 @@ You should now be able to access the application at http://127.0.0.1:8000/.
     }
   }
 
-  - `201 Created` on success.
+`201 Created` on success.
 
-  - `400 Bad Request` on validation error.
+`400 Bad Request` on validation error.
 
 
 #### GET /books/
@@ -138,7 +138,7 @@ You should now be able to access the application at http://127.0.0.1:8000/.
   }
 
 
-  - `200 OK` with books data on success.
+`200 OK` with books data on success.
 
 
 #### GET /view-book/{book_id}/
@@ -163,9 +163,9 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
 
 
-  - `200 OK` with books data on success.
+`200 OK` with books data on success.
 
-  - `404 Not Found` if no data is available for the city.
+`404 Not Found` if no data is available for the city.
 
 
 #### GET /filter-books/{book_id}/
