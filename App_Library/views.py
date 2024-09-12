@@ -127,7 +127,6 @@ class LibraryViewSets(viewsets.ModelViewSet):
 
         unavailable_books_with_return_date = []
         for book in unavailable_books:
-            # Find the latest return date for the borrowed book
             borrowed_book = BorrowedBook.objects.filter(book=book).order_by('-return_date').first()
 
             if borrowed_book:
@@ -137,7 +136,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
                     'return_date': borrowed_book.return_date
                 })
 
-        return Response({'unavailable_books': unavailable_books_with_return_date})
+        return Response({"status": "success", "message": "Unavailable books", "data": unavailable_books_with_return_date})
     
 
     

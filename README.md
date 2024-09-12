@@ -67,6 +67,7 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 - `POST /add-book/`: Add new book data.
 - `DELETE /remove-book/{book_id}/`: Remove book.
 - `GET /users/`: Users.
+- `GET /unavailable-books/`: Unavailable books.
 
 
 ## **API Implementation**
@@ -293,7 +294,29 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
 `200 OK` with books data on success.
 
+#### GET /unavailable-books/
 
+- **Response**:
+
+  ```json
+  {
+    "status": "success",
+    "message": "Unavailable books",
+    "data": [
+        {
+            "book_title": "The AI",
+            "author": "Charles",
+            "return_date": "2024-09-22T22:02:16.831551Z"
+        },
+        {
+            "book_title": "Forge",
+            "author": "Benard J",
+            "return_date": "2024-09-22T22:12:36.477419Z"
+        }
+    ]
+  }
+
+`200 OK` with books data on success.
 
 ## **Testing**
 Run a tests to ensure the API endpoints work as expected.

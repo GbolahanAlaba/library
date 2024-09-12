@@ -182,6 +182,10 @@ class LibraryURLTestCase(APITestCase):
     def test_users_url(self):
         url = reverse('library-users')
         self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'users'}).__name__)
+    
+    def test_unavailable_books_url(self):
+        url = reverse('books-unavailable')
+        self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'unavailable_books'}).__name__)
 
 
 
