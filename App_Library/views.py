@@ -25,7 +25,7 @@ def handle_exceptions(func):
        
 class LibraryViewSets(viewsets.ModelViewSet):
     queryset = Book.objects.all()
-    book_serializer_class = BookSerializer
+    serializer_class = BookSerializer
     user_serializer_class = UserSerializer
 
     filter_backends = [filters.SearchFilter]
@@ -42,7 +42,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
     def books(self, request, *args, **kwargs):
         obj = Book.objects.all().order_by("-created_at")
 
-        serializer = self.book_serializer_class(obj, many=True)
+        serializer = self.serializer_class(obj, many=True)
         return Response({"status": "success", "message": "All Books", "data": serializer.data}, status=status.HTTP_200_OK)
 
     @handle_exceptions
@@ -52,7 +52,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
         if not book:
             return Response({"status": "failed", "message": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
-            serializer = self.book_serializer_class(book)
+            serializer = self.serializer_class(book)
             return Response({"status": "success", "message": f"{book.title}", "data": serializer.data}, status=status.HTTP_200_OK)
 
     @handle_exceptions
@@ -65,7 +65,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
         if category:
             self.queryset = self.queryset.filter(category__icontains=category)
         
-        serializer = self.book_serializer_class(self.queryset, many=True)
+        serializer = self.serializer_class(self.queryset, many=True)
         return Response({"status": "success", "message": "All books", "data":serializer.data}, status=status.HTTP_200_OK)
     
 

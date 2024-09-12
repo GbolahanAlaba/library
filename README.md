@@ -162,6 +162,7 @@ You should now be able to access the application at http://127.0.0.1:8000/.
   }
 
 
+
   - `200 OK` with books data on success.
 
   - `404 Not Found` if no data is available for the city.
