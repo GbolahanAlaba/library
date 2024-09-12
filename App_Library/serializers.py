@@ -19,4 +19,4 @@ class UserSerializer(serializers.ModelSerializer):
 class BorrowedBookSerializer(serializers.ModelSerializer):
     class Meta:
         model = BorrowedBook
-        fields = ['id', 'user', 'book', 'borrow_date', 'return_date']
+        fields = ['borrow_id', 'user', 'book', 'borrow_date', 'return_date']

@@ -121,6 +121,23 @@ class LibraryViewSets(viewsets.ModelViewSet):
 
     
 
+    @handle_exceptions
+    def unavailable_books(self, request, *args, **kwargs):
+        unavailable_books = Book.objects.filter(available_copies=0)
+
+        unavailable_books_with_return_date = []
+        for book in unavailable_books:
+            # Find the latest return date for the borrowed book
+            borrowed_book = BorrowedBook.objects.filter(book=book).order_by('-return_date').first()
+
+            if borrowed_book:
+                unavailable_books_with_return_date.append({
+                    'book_title': book.title,
+                    'author': book.author,
+                    'return_date': borrowed_book.return_date
+                })
+
+        return Response({'unavailable_books': unavailable_books_with_return_date})
     
 
     

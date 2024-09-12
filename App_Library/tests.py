@@ -13,9 +13,9 @@ class BookViewSetTestCase(APITestCase):
         self.enroll_user_url = reverse('user-enroll')
         self.books_url = reverse('all-books')
         self.view_book_url = lambda book_id: reverse('book-view', kwargs={'book_id': book_id})
-
         self.add_book_url = reverse('book-add')
         self.remove_book_url = lambda book_id: reverse('book-remove', kwargs={'book_id': book_id})
+        self.users_url = reverse('library-users')
 
         self.valid_user_payload = {
             'first_name': 'Gbolahan',
@@ -130,6 +130,20 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data['status'], 'failed')
         self.assertEqual(response.data['message'], 'Book not found')
+
+    def test_get_all_users(self):
+        response = self.client.get(self.users_url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['status'], 'success')
+        self.assertEqual(response.data['message'], 'All library users')
+
+        users_data = response.data['data']
+        self.assertEqual(len(users_data), User.objects.count())
+
+        first_user = users_data[0]
+        self.assertEqual(first_user['first_name'], self.user.first_name)
+        self.assertEqual(first_user['last_name'], self.user.last_name)
+        self.assertEqual(first_user['email'], self.user.email)
 
 
 
