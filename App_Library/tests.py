@@ -10,10 +10,12 @@ from .views import LibraryViewSets
 class BookViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.add_book_url = reverse('book-add')
+        self.enroll_user_url = reverse('user-enroll')
         self.books_url = reverse('all-books')
         self.view_book_url = lambda book_id: reverse('book-view', kwargs={'book_id': book_id})
-        self.enroll_user_url = reverse('user-enroll')
+
+        self.add_book_url = reverse('book-add')
+        self.remove_book_url = lambda book_id: reverse('book-remove', kwargs={'book_id': book_id})
 
         self.valid_user_payload = {
             'first_name': 'Gbolahan',
@@ -114,6 +116,20 @@ class BookViewSetTestCase(APITestCase):
     def test_add_book_invalid_payload(self):
         response = self.client.post(self.add_book_url, data=self.invalid_book_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_remove_book_success(self):
+        response = self.client.delete(self.remove_book_url(self.book_id), format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['status'], 'success')
+        self.assertEqual(response.data['message'], f"{self.book.title} book removed from catalogue")
+        self.assertFalse(Book.objects.filter(book_id=self.book_id).exists())
+
+    def test_remove_book_not_found(self):
+        invalid_book_id = '00000000-0000-0000-0000-000000000000'
+        response = self.client.delete(self.remove_book_url(invalid_book_id), format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data['status'], 'failed')
+        self.assertEqual(response.data['message'], 'Book not found')
 
 
 
