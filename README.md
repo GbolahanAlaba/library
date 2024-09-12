@@ -65,46 +65,44 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 - `POST /filter-books/`: Filter books bu=y author or category.
 - `POST /borrow-book/`: borrow books from the library.
 - `POST /add-book/`: Add new book data.
+- `POST /remove-book/{book_id}/`: Remove book.
 
 
 ## **API Implementation**
 
-#### POST /add-book/
+
+#### POST /enroll-user/
 
 - **Request Body**:
 
   ```json
   {
-    "title": "Gross Profit",
-    "author": "Bolanle",
-    "publication_date": "2024-09-12",
-    "publisher": "Ugo",
-    "language": "English",
-    "category": "Finance",
-    "description": "This is a new book"
+    "first_name": "Gbolahan",
+    "last_name": "Alaba",
+    "email": "gbolahan@gmail.com",
   }
 
 - **Response**:
 
   ```json
+
+
   {
     "status": "success",
-    "message": "Book added",
+    "message": "User enrolled",
     "data": {
-        "book_id": "a4978918-3517-4699-a18f-5d07d19e4c43",
-        "title": "Gross Profit",
-        "author": "Bolanle",
-        "publication_date": "2024-09-12",
-        "publisher": "Ugo",
-        "language": "English",
-        "category": "Finance",
-        "description": "This is a new book"
+        "user_id": "7903ed92-9037-4bcc-b863-f60b7f807e25",
+        "first_name": "Gbolahan",
+        "last_name": "Alaba",
+        "email": "gb0lahan@gmainl.com",
+        "created_at": "2024-09-12T13:03:55.089390Z"
     }
   }
 
 `201 Created` on success.
 
 `400 Bad Request` on validation error.
+
 
 
 #### GET /books/
@@ -168,6 +166,15 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 `404 Not Found` if no data is available for the city.
 
 
+#### GET /filter-books/?search=charles/
+
+- **Response**:
+
+  ```json
+
+
+
+
 #### POST /borrow-book/
 
 - **Request Body**:
@@ -203,43 +210,58 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 `400 Bad Request` on validation error.
 
 
-#### GET /filter-books/{book_id}/
 
-- **Response**:
-
-  ```json
-
-#### POST /enroll-user/
+#### POST /add-book/
 
 - **Request Body**:
 
   ```json
   {
-    "first_name": "Gbolahan",
-    "last_name": "Alaba",
-    "email": "gbolahan@gmail.com",
+    "title": "Gross Profit",
+    "author": "Bolanle",
+    "publication_date": "2024-09-12",
+    "publisher": "Ugo",
+    "language": "English",
+    "category": "Finance",
+    "description": "This is a new book"
   }
 
 - **Response**:
 
   ```json
-
-
   {
     "status": "success",
-    "message": "User enrolled",
+    "message": "Book added",
     "data": {
-        "user_id": "7903ed92-9037-4bcc-b863-f60b7f807e25",
-        "first_name": "Gbolahan",
-        "last_name": "Alaba",
-        "email": "gb0lahan@gmainl.com",
-        "created_at": "2024-09-12T13:03:55.089390Z"
+        "book_id": "a4978918-3517-4699-a18f-5d07d19e4c43",
+        "title": "Gross Profit",
+        "author": "Bolanle",
+        "publication_date": "2024-09-12",
+        "publisher": "Ugo",
+        "language": "English",
+        "category": "Finance",
+        "description": "This is a new book"
     }
   }
 
 `201 Created` on success.
 
 `400 Bad Request` on validation error.
+
+
+#### GET /remove-book/{book_id}/
+
+- **Response**:
+
+  ```json
+  {
+    "status": "success",
+    "message": "The AI book removed from catalogue"
+  }
+
+`200 OK` with books data on success.
+
+`404 Not Found` if no data is available for the city.
 
 
 ## **Testing**
