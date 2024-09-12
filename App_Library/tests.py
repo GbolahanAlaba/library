@@ -1,50 +1,63 @@
-# from django.urls import reverse, resolve
-# from rest_framework import status
-# from rest_framework.test import APITestCase, APIClient
-# from django.test import TestCase
-# from .models import Weather
-# from .views import WeatherViewSet
+from django.urls import reverse, resolve
+from rest_framework import status
+from rest_framework.test import APITestCase, APIClient
+from django.test import TestCase
+from .models import *
+from .views import LibraryViewSets
 
 
-# # TEST FOR VIEWS
-# class WeatherViewSetTestCase(APITestCase):
-#     def setUp(self):
-#         self.client = APIClient()
-#         self.create_weather_url = reverse('weather-create')
-#         self.city_weather_url = lambda city: reverse('weather-detail', kwargs={'city': city})
+# TEST FOR VIEWS
+class BookViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.add_book_url = reverse('book-add')
+        self.books_url = reverse('all-books')
+        self.get_book_url = lambda book_id: reverse('get-book-detail', kwargs={'book_id': book_id})
         
-#         self.valid_payload = {
-#             'city': 'Lagos',
-#             'date': '2024-08-04',
-#             'temperature': 25.5,
-#             'description': 'Sunny with clear skies'
-#         }
+        self.valid_payload = {
+            'title': 'Lagos Boy',
+            'author': 'Vincent',
+            'publication_date': '2024-09-12',
+            'publisher': 'Mr Bone',
+            'language': 'English',
+            'category': "Lifestyle",
+            'description': 'Sunny with clear skies'
+        }
         
-#         self.invalid_payload = {
-#             'city': '',
-#             'date': 'invalid-date',
-#             'temperature': 'invalid-temperature',
-#             'description': ''
-#         }
+        self.invalid_payload = {
+            'title': 'Lagos',
+            'author': '2024-08-04',
+            'publication_date': 25.5,
+            'publisher': 'Sunny with clear skies',
+            'language': 25.5,
+            'category': 'Sunny with clear skies',
+            'description': '2024-08-04'
+        }
         
-#         self.weather = Weather.objects.create(
-#             city='Lagos',
-#             date='2024-08-04',
-#             temperature=25.5,
-#             description='Sunny with clear skies'
-#         )
+        self.book = Book.objects.create(
+            title='Lagos Boy',
+            author='Vincent',
+            publication_date='2024-09-12',
+            publisher='Mr Bone',
+            language='English',
+            category="Lifestyle",
+            description='Sunny with clear skies'
+        )
 
-#     def test_create_city_weather_valid_payload(self):
-#         response = self.client.post(self.create_weather_url, data=self.valid_payload, format='json')
-#         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-#         self.assertEqual(response.data['city'], self.valid_payload['city'])
-#         self.assertEqual(response.data['date'], self.valid_payload['date'])
-#         self.assertEqual(response.data['temperature'], self.valid_payload['temperature'])
-#         self.assertEqual(response.data['description'], self.valid_payload['description'])
+    def test_add_book_valid_payload(self):
+        response = self.client.post(self.add_book_url, data=self.valid_payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['title'], self.valid_payload['title'])
+        self.assertEqual(response.data['author'], self.valid_payload['author'])
+        self.assertEqual(response.data['publication_date'], self.valid_payload['publication_date'])
+        self.assertEqual(response.data['publisher'], self.valid_payload['publisher'])
+        self.assertEqual(response.data['language'], self.valid_payload['language'])
+        self.assertEqual(response.data['category'], self.valid_payload['category'])
+        self.assertEqual(response.data['description'], self.valid_payload['description'])
 
-#     def test_create_city_weather_invalid_payload(self):
-#         response = self.client.post(self.create_weather_url, data=self.invalid_payload, format='json')
-#         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_add_book_invalid_payload(self):
+        response = self.client.post(self.add_book_url, data=self.invalid_payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 #     def test_view_city_weather_exists(self):
 #         response = self.client.get(self.city_weather_url('Lagos'), format='json')

@@ -55,7 +55,7 @@ Apply the migrations to set up your database schema:
 Start the development server to verify everything is set up correctly:
 
 `python manage.py runserver`
-You should now be able to access the application at http://127.0.0.1:8000/.
+You should now be able to access the application at http://127.0.0.1:8000/library.
 
 ## **API Endpoints**
 
@@ -64,36 +64,75 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
 ## **API Implementation**
 
-#### POST /weather
+#### POST /add-book
 
 - **Request Body**:
 
   ```json
   {
-      "city": "CityName",
-      "date": "YYYY-MM-DD",
-      "temperature": 23.5,
-      "description": "Clear sky"
+    "title": "Gross Profit",
+    "author": "Bolanle",
+    "publication_date": "2024-09-12",
+    "publisher": "Ugo",
+    "language": "English",
+    "category": "Finance",
+    "description": "This is a new book"
   }
 
 - **Response**:
+
+```json
+  {
+    "status": "success",
+    "message": "Book added",
+    "data": {
+        "book_id": "a4978918-3517-4699-a18f-5d07d19e4c43",
+        "title": "Gross Profit",
+        "author": "Bolanle",
+        "publication_date": "2024-09-12",
+        "publisher": "Ugo",
+        "language": "English",
+        "category": "Finance",
+        "description": "This is a new book"
+    }
+  }
 
 `201 Created` on success.
 
 `400 Bad Request` on validation error.
 
 
-#### GET /weather/{city}
+#### GET /books
 
 - **Response**:
 
   ```json
   {
-      "city": "CityName",
-      "date": "YYYY-MM-DD",
-      "temperature": 23.5,
-      "description": "Clear sky"
-  }
+    "status": "success",
+    "message": "All Books",
+    "data": [
+        {
+            "book_id": "e4aebf09-ad6f-489b-9a0e-395d4d6ff408",
+            "title": "Gross Profit",
+            "author": "Bolanle",
+            "publication_date": "2024-09-12",
+            "publisher": "Ugo",
+            "language": "English",
+            "category": "Finance",
+            "description": "This is a new book"
+        },
+        {
+            "book_id": "5bb8c819-d020-46c1-b8b2-06b116ba0ce1",
+            "title": "Gross Profit",
+            "author": "Bolanle",
+            "publication_date": "2024-09-12",
+            "publisher": "Ugo",
+            "language": "English",
+            "category": "Finance",
+            "description": "This is a new book"
+        },
+    ]
+}
 
 
 - `200 OK` with weather data on success.

@@ -25,14 +25,15 @@ def handle_exceptions(func):
        
 class LibraryViewSets(viewsets.ModelViewSet):
     queryset = Book.objects.all()
-    serializer_class = LibrarySerializer
+    book_serializer_class = BookSerializer
+    user_serializer_class = UserSerializer
 
     filter_backends = [filters.SearchFilter]
     search_fields = ['author', 'category']
 
     @handle_exceptions
     def add_new_book(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.book_serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"status": "success", "message": "Book added", "data": serializer.data}, status=status.HTTP_201_CREATED)
@@ -41,7 +42,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
     def books(self, request, *args, **kwargs):
         obj = Book.objects.all().order_by("-created_at")
 
-        serializer = self.serializer_class(obj, many=True)
+        serializer = self.book_serializer_class(obj, many=True)
         return Response({"status": "success", "message": "All Books", "data": serializer.data}, status=status.HTTP_200_OK)
 
     @handle_exceptions
@@ -51,7 +52,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
         if not book:
             return Response({"status": "failed", "message": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
-            serializer = self.serializer_class(book)
+            serializer = self.book_serializer_class(book)
             return Response({"status": "success", "message": f"{book.title}", "data": serializer.data}, status=status.HTTP_201_CREATED)
 
     @handle_exceptions
@@ -65,3 +66,11 @@ class LibraryViewSets(viewsets.ModelViewSet):
             self.queryset = self.queryset.filter(category__icontains=category)
 
         return super().list(request, *args, **kwargs)
+    
+
+    @handle_exceptions
+    def enroll_user(self, request, *args, **kwargs):
+        serializer = self.user_serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"status": "success", "message": "User enrolled", "data": serializer.data}, status=status.HTTP_201_CREATED)
