@@ -43,35 +43,41 @@ class BookViewSetTestCase(APITestCase):
             category="Lifestyle",
             description='Sunny with clear skies'
         )
+        self.book_id = str(self.book.book_id)  # Store the actual book ID
 
     def test_add_book_valid_payload(self):
         response = self.client.post(self.add_book_url, data=self.valid_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['title'], self.valid_payload['title'])
-        self.assertEqual(response.data['author'], self.valid_payload['author'])
-        self.assertEqual(response.data['publication_date'], self.valid_payload['publication_date'])
-        self.assertEqual(response.data['publisher'], self.valid_payload['publisher'])
-        self.assertEqual(response.data['language'], self.valid_payload['language'])
-        self.assertEqual(response.data['category'], self.valid_payload['category'])
-        self.assertEqual(response.data['description'], self.valid_payload['description'])
+        book_data = response.data['data']
+        self.assertEqual(book_data['title'], self.valid_payload['title'])
+        self.assertEqual(book_data['author'], self.valid_payload['author'])
+        self.assertEqual(book_data['publication_date'], self.valid_payload['publication_date'])
+        self.assertEqual(book_data['publisher'], self.valid_payload['publisher'])
+        self.assertEqual(book_data['language'], self.valid_payload['language'])
+        self.assertEqual(book_data['category'], self.valid_payload['category'])
+        self.assertEqual(book_data['description'], self.valid_payload['description'])
 
     def test_add_book_invalid_payload(self):
         response = self.client.post(self.add_book_url, data=self.invalid_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-#     def test_view_city_weather_exists(self):
-#         response = self.client.get(self.city_weather_url('Lagos'), format='json')
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.data['city'], self.weather.city)
-#         self.assertEqual(response.data['date'], str(self.weather.date))
-#         self.assertEqual(response.data['temperature'], self.weather.temperature)
-#         self.assertEqual(response.data['description'], self.weather.description)
+    def test_view_book_detail_exists(self):
+        response = self.client.get(self.get_book_url(self.book_id), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        book_data = response.data['data']
+        self.assertEqual(book_data['title'], self.book.title)
+        self.assertEqual(book_data['author'], str(self.book.author))
+        self.assertEqual(book_data['publication_date'], self.book.publication_date)
+        self.assertEqual(book_data['publisher'], self.book.publisher)
+        self.assertEqual(book_data['language'], str(self.book.language))
+        self.assertEqual(book_data['category'], self.book.category)
+        self.assertEqual(book_data['description'], self.book.description)
 
-#     def test_view_city_weather_not_exists(self):
-#         response = self.client.get(self.city_weather_url('Nonexistent City'), format='json')
-#         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-#         self.assertEqual(response.data['status'], 'failed')
-#         self.assertEqual(response.data['message'], 'City not found')
+    def test_view_book_detail_not_exists(self):
+        response = self.client.get(self.get_book_url('Nonexistent City'), format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data['status'], 'failed')
+        self.assertEqual(response.data['message'], 'book not found')
 
 
 # # TEST FOR URLS

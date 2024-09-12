@@ -53,7 +53,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
             return Response({"status": "failed", "message": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
             serializer = self.book_serializer_class(book)
-            return Response({"status": "success", "message": f"{book.title}", "data": serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({"status": "success", "message": f"{book.title}", "data": serializer.data}, status=status.HTTP_200_OK)
 
     @handle_exceptions
     def filter_books(self, request, *args, **kwargs):
