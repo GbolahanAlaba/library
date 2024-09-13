@@ -16,6 +16,7 @@ class BookViewSetTestCase(APITestCase):
         self.add_book_url = reverse('book-add')
         self.remove_book_url = lambda book_id: reverse('book-remove', kwargs={'book_id': book_id})
         self.users_url = reverse('library-users')
+        self.unavailable_books_url = reverse('books-unavailable')
 
         self.valid_user_payload = {
             'first_name': 'Gbolahan',
@@ -64,6 +65,7 @@ class BookViewSetTestCase(APITestCase):
             publisher='Mr Bone',
             language='English',
             category="Lifestyle",
+            available_copies=1,
             description='Sunny with clear skies'
         )
         self.book_id = str(self.book.book_id)
@@ -145,6 +147,31 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(first_user['last_name'], self.user.last_name)
         self.assertEqual(first_user['email'], self.user.email)
 
+    def test_get_unavailable_books(self):
+        response = self.client.get(self.unavailable_books_url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['status'], 'success')
+        self.assertEqual(response.data['message'], 'Unavailable books')
+
+        unavailable_books_data = response.data['data']
+        self.assertEqual(len(unavailable_books_data), 1)
+
+        first_unavailable_book = unavailable_books_data[0]
+        self.assertEqual(first_unavailable_book['book_title'], self.book.title)
+        self.assertEqual(first_unavailable_book['author'], self.book.author)
+        self.assertEqual(first_unavailable_book['return_date'], self.borrowed_book.return_date)
+
+    # def test_no_unavailable_books(self):
+    #     self.book.available_copies = 1
+    #     self.book.save()
+
+    #     response = self.client.get(self.unavailable_books_url, format='json')
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(response.data['status'], 'success')
+    #     self.assertEqual(response.data['message'], 'Unavailable books')
+
+    #     unavailable_books_data = response.data['data']
+    #     self.assertEqual(len(unavailable_books_data), 1)
 
 
 
