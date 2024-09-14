@@ -18,7 +18,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 class BorrowedBookSerializer(serializers.ModelSerializer):
     return_date = serializers.DateField(format='%Y-%m-%d')
-    
+
     class Meta:
         model = BorrowedBook
         fields = ['borrow_id', 'user', 'book', 'borrow_date', 'return_date']
+
+
+class UserBorrowedBooksSerializer(serializers.ModelSerializer):
+    borrowed_books = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'borrowed_books']
+
+    def get_borrowed_books(self, obj):
+        borrowed_books = BorrowedBook.objects.filter(user=obj)
+        return BorrowedBookSerializer(borrowed_books, many=True).data

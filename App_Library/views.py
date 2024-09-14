@@ -9,6 +9,7 @@ from rest_framework.views import exception_handler
 from rest_framework import filters
 from django.shortcuts import get_object_or_404
 from datetime import timedelta
+from datetime import date
 # from .utils import get_object_or_404_customized
 
 
@@ -88,8 +89,10 @@ class LibraryViewSets(viewsets.ModelViewSet):
             return Response({"status": "failed", "message": "Book not available or out of stock."}, status=status.HTTP_404_NOT_FOUND)
 
         borrow_days = int(borrow_duration)
-        return_date = timezone.now() + timedelta(days=borrow_days)
+        return_date = date.today() + timedelta(days=borrow_days)
         borrowed_book = BorrowedBook.objects.create(user=full_name, book=book, return_date=return_date)
+        book.available_copies -= 1
+        book.save()
 
         serializer = BorrowedBookSerializer(borrowed_book)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -139,8 +142,10 @@ class LibraryViewSets(viewsets.ModelViewSet):
         return Response({"status": "success", "message": "Unavailable books", "data": unavailable_books_with_return_date})
     
 
-    
-    
+    def borrowed_books(self, request):
+        queryset = User.objects.all()
+        serializer = UserBorrowedBooksSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     
 
