@@ -9,6 +9,7 @@ from rest_framework.views import exception_handler
 from rest_framework import filters
 from django.shortcuts import get_object_or_404
 from datetime import date, timedelta
+from rest_framework.decorators import action
 # from .utils import get_object_or_404_customized
 
 
@@ -59,18 +60,21 @@ class LibraryViewSets(viewsets.ModelViewSet):
             return Response({"status": "success", "message": f"{book.title}", "data": serializer.data}, status=status.HTTP_200_OK)
     
 
+    @action(detail=False, methods=['get'], url_path='filter-books')
     @handle_exceptions
     def filter_books(self, request, *args, **kwargs):
         author = request.query_params.get('author', None)
         category = request.query_params.get('category', None)
 
+        queryset = self.queryset  # Use the initialized queryset
+
         if author:
-            self.queryset = self.queryset.filter(author__icontains=author)
+            queryset = queryset.filter(author__icontains=author)
         if category:
-            self.queryset = self.queryset.filter(category__icontains=category)
+            queryset = queryset.filter(category__icontains=category)
         
-        serializer = self.book_serializer_class(self.queryset, many=True)
-        return Response({"status": "success", "message": "All books", "data":serializer.data}, status=status.HTTP_200_OK)
+        serializer = BookSerializer(queryset, many=True)  # Ensure you're using the correct serializer
+        return Response({"status": "success", "message": "Filtered books", "data": serializer.data}, status=status.HTTP_200_OK)
     
 
     @handle_exceptions
