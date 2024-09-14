@@ -359,6 +359,7 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
 `400 Bad Request` on validation error.
 
+
 ## **Testing**
 Run a tests to ensure the API endpoints work as expected.
 
