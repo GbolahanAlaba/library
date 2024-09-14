@@ -8,8 +8,7 @@ from functools import wraps
 from rest_framework.views import exception_handler
 from rest_framework import filters
 from django.shortcuts import get_object_or_404
-from datetime import timedelta
-from datetime import date, datetime
+from datetime import date, timedelta
 # from .utils import get_object_or_404_customized
 
 

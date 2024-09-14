@@ -68,6 +68,7 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 - `DELETE /remove-book/{book_id}/`: Remove book.
 - `GET /users/`: Users.
 - `GET /unavailable-books/`: Unavailable books.
+- `GET /borrowed-books-and-user/`: Borrowed books and user.
 
 
 ## **API Implementation**
@@ -176,14 +177,13 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
 
 
-
 #### POST /borrow-book/
 
 - **Request Body**:
 
   ```json
   {
-    "full_name": "Gbolahan Alaba",
+    "user_id": "9174abc5-aff7-4114-8d9b-2d04e38eccef",
     "book_id": "474f6ab2-7a46-427b-91d8-eeb1688a4766",
     "duration": "10",
    
@@ -193,18 +193,11 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
   ```json
   {
-    "status": "success",
-    "message": "Book added",
-    "data": {
-        "book_id": "a4978918-3517-4699-a18f-5d07d19e4c43",
-        "title": "Gross Profit",
-        "author": "Bolanle",
-        "publication_date": "2024-09-12",
-        "publisher": "Ugo",
-        "language": "English",
-        "category": "Finance",
-        "description": "This is a new book"
-    }
+    "borrow_id": "def65e2f-e74b-46bd-a577-538082e82062",
+    "user": "Gbolahan",
+    "book": "Forge",
+    "borrow_date": "2024-09-14",
+    "return_date": "2024-09-24"
   }
 
 `201 Created` on success.
@@ -315,6 +308,44 @@ You should now be able to access the application at http://127.0.0.1:8000/.
         }
     ]
   }
+
+`200 OK` with books data on success.
+
+#### GET /borrowed-books-and-user/
+
+- **Response**:
+
+  ```json
+  [
+    {
+        "first_name": "Gbolahan",
+        "last_name": "Alaba",
+        "email": "gb0lahan@gmainl.com",
+        "borrowed_books": [
+            {
+                "borrow_id": "def65e2f-e74b-46bd-a577-538082e82062",
+                "user": "Gbolahan",
+                "book": "Forge",
+                "borrow_date": "2024-09-14",
+                "return_date": "2024-09-24"
+            }
+        ]
+    },
+    {
+        "first_name": "Dorcas",
+        "last_name": "Alaba",
+        "email": "dorcas@gmainl.com",
+        "borrowed_books": [
+            {
+                "borrow_id": "8a416d1e-8571-496c-b667-0b7152dbf7fd",
+                "user": "Dorcas",
+                "book": "Forge",
+                "borrow_date": "2024-09-14",
+                "return_date": "2024-09-24"
+            }
+        ]
+    }
+  ]
 
 `200 OK` with books data on success.
 
