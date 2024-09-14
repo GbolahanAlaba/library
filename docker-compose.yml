@@ -10,3 +10,4 @@ services:
       - .:/library
     ports:
       - "8000:8000"
+
