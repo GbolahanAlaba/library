@@ -32,7 +32,7 @@ class User(models.Model):
     updated_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.first_name
+        return f"{self.first_name} {self.last_name}"
 
 class BorrowedBook(models.Model):
     borrow_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
