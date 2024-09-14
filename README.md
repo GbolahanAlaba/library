@@ -8,7 +8,7 @@ This project is a Django-based application utilizing Django Rest Framework (DRF)
 ## **Prerequisites**
 
 - `Python 3.11.3`
-- `Django 5.0.7`
+- `Django 5.1.1`
 - `Django Rest Framework (DRF) 3.15.2`
 - `SQLite or any other preferred database`
 
