@@ -17,6 +17,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class BorrowedBookSerializer(serializers.ModelSerializer):
+    return_date = serializers.DateField(format='%Y-%m-%d')
+    
     class Meta:
         model = BorrowedBook
         fields = ['borrow_id', 'user', 'book', 'borrow_date', 'return_date']
