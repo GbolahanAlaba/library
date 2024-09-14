@@ -76,12 +76,17 @@ class LibraryViewSets(viewsets.ModelViewSet):
 
     @handle_exceptions
     def borrow_book(self, request, *args, **kwargs):
-        full_name = request.data.get('full_name')
+        user_id = request.data.get('user_id')
         book_id = request.data.get('book_id')
         borrow_duration = request.data.get('borrow_duration')
 
-        if not book_id or not borrow_duration:
-            return Response({"status": "failed", "message": "Please provide both book_id and borrow_duration."}, status=status.HTTP_400_BAD_REQUEST)
+        if not user_id or not book_id or not borrow_duration:
+            return Response({"status": "failed", "message": "Please provide user_id, book_id, and borrow_duration."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(user_id=user_id)
+        except User.DoesNotExist:
+            return Response({"status": "failed", "message": "User does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
         try:
             book = Book.objects.get(book_id=book_id, available_copies__gt=0)
@@ -90,13 +95,14 @@ class LibraryViewSets(viewsets.ModelViewSet):
 
         borrow_days = int(borrow_duration)
         return_date = date.today() + timedelta(days=borrow_days)
-        borrowed_book = BorrowedBook.objects.create(user=full_name, book=book, return_date=return_date)
+        borrowed_book = BorrowedBook.objects.create(user=user, book=book, return_date=return_date)
         book.available_copies -= 1
         book.save()
 
         serializer = BorrowedBookSerializer(borrowed_book)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
+
     @handle_exceptions
     def add_new_book(self, request, *args, **kwargs):
         serializer = self.book_serializer_class(data=request.data)
@@ -104,6 +110,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
         serializer.save()
         return Response({"status": "success", "message": "Book added", "data": serializer.data}, status=status.HTTP_201_CREATED)
     
+
     @handle_exceptions
     def remove_book(self, request, book_id, *args, **kwargs):
         book = Book.objects.filter(book_id=book_id).first()
@@ -123,7 +130,6 @@ class LibraryViewSets(viewsets.ModelViewSet):
         return Response({"status": "success", "message": "All library users", "data": serializer.data}, status=status.HTTP_201_CREATED)
 
     
-
     @handle_exceptions
     def unavailable_books(self, request, *args, **kwargs):
         unavailable_books = Book.objects.filter(available_copies=0)

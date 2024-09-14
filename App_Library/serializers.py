@@ -18,11 +18,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 class BorrowedBookSerializer(serializers.ModelSerializer):
     return_date = serializers.DateField(format='%Y-%m-%d')
+    user = serializers.CharField(source='user.first_name', read_only=True)  # Return user's full name
+    book = serializers.CharField(source='book.title', read_only=True)  # Return book title
 
     class Meta:
         model = BorrowedBook
         fields = ['borrow_id', 'user', 'book', 'borrow_date', 'return_date']
-
 
 class UserBorrowedBooksSerializer(serializers.ModelSerializer):
     borrowed_books = serializers.SerializerMethodField()

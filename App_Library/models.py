@@ -36,7 +36,7 @@ class User(models.Model):
 
 class BorrowedBook(models.Model):
     borrow_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     borrow_date = models.DateTimeField(default=timezone.now)
     return_date = models.DateTimeField()
