@@ -80,7 +80,7 @@ class BookViewSetTestCase(APITestCase):
     )
 
 
-    """Test for enrolling users into the library"""
+    """NUMBER ONE - Test for enrolling users into the library"""
     def test_enroll_user_valid_payload(self):
         response = self.client.post(self.enroll_user_url, data=self.valid_user_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -94,7 +94,7 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    """Test for listing all books in the library"""
+    """NUMBER TWO - Test for listing all books in the library"""
     def test_get_all_books(self):
         response = self.client.get(self.books_url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -114,7 +114,7 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(first_book['category'], self.book.category)
         self.assertEqual(first_book['description'], self.book.description)
 
-    """Test for viewing book details"""
+    """NUMBER THREE - Test for viewing book details"""
     def test_view_book_details_exists(self):
         response = self.client.get(self.view_book_url(self.book_id), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -136,7 +136,7 @@ class BookViewSetTestCase(APITestCase):
 
 
 
-    """Test for borrowing books"""
+    """NUMBER FOUR - Test for borrowing books"""
     def test_borrow_book_success(self):
         data = {
             'user_id': self.user_id,
@@ -205,7 +205,7 @@ class BookViewSetTestCase(APITestCase):
         print(self.borrow_book_url)
 
     
-    """Test for adding books to the library"""
+    """NUMBER SIX - Test for adding books to the library"""
     def test_add_book_valid_payload(self):
         response = self.client.post(self.add_book_url, data=self.valid_book_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -223,7 +223,7 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    """Test for removing books from the library"""
+    """NUMBER SEVEN - Test for removing books from the library"""
     def test_remove_book_success(self):
         response = self.client.delete(self.remove_book_url(self.book_id), format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -239,7 +239,7 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(response.data['message'], 'Book not found')
 
 
-    """Test for getting all users enrolled in the library"""
+    """NUMBER EIGHT - Test for getting all users enrolled in the library"""
     def test_get_all_users(self):
         response = self.client.get(self.users_url, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
