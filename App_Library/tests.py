@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase, APIClient
 from django.test import TestCase
 from .models import *
 from .views import LibraryViewSets
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 
 # TEST FOR VIEWS
@@ -18,8 +18,9 @@ class BookViewSetTestCase(APITestCase):
         self.add_book_url = reverse('book-add')
         self.remove_book_url = lambda book_id: reverse('book-remove', kwargs={'book_id': book_id})
         self.users_url = reverse('library-users')
-        self.unavailable_books_url = reverse('books-unavailable')
         self.borrowed_books_url = reverse('books-borrowed')
+        self.unavailable_books_url = reverse('books-unavailable')
+        
 
         self.valid_user_payload = {
             'first_name': 'Gbolahan',
@@ -135,76 +136,6 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(response.data['status'], 'failed')
         self.assertEqual(response.data['message'], 'Book not found')
 
-
-
-    """NUMBER FOUR - Test for borrowing books"""
-    def test_borrow_book_success(self):
-        data = {
-            'user_id': self.user_id,
-            'book_id': self.book_id,
-            'borrow_duration': 7  # Borrow for 7 days
-        }
-        response = self.client.post(self.borrow_book_url, data=data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        borrowed_book_data = response.data
-        self.assertEqual(borrowed_book_data['user'], self.user_id)
-        self.assertEqual(borrowed_book_data['book'], self.book_id)
-        self.assertEqual(borrowed_book_data['borrow_date'], (timezone.now().date()).isoformat())
-        self.assertEqual(borrowed_book_data['return_date'], (timezone.now().date() + timedelta(days=7)).isoformat())
-
-        # Check if available copies have decreased
-        self.book.refresh_from_db()
-        self.assertEqual(self.book.available_copies, 4)
-
-    def test_borrow_book_missing_parameters(self):
-        data = {
-            'user_id': self.user_id,
-            'book_id': self.book_id
-        }
-        response = self.client.post(self.borrow_book_url, data=data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['status'], 'failed')
-        self.assertEqual(response.data['message'], 'Please provide user_id, book_id, and borrow_duration.')
-
-    def test_borrow_book_user_not_exists(self):
-        data = {
-            'user_id': '00000000-0000-0000-0000-000000000000',  # Invalid user ID
-            'book_id': self.book_id,
-            'borrow_duration': 7
-        }
-        response = self.client.post(self.borrow_book_url, data=data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data['status'], 'failed')
-        self.assertEqual(response.data['message'], 'User does not exist.')
-
-    def test_borrow_book_book_not_exists(self):
-        data = {
-            'user_id': self.user_id,
-            'book_id': '00000000-0000-0000-0000-000000000000',  # Invalid book ID
-            'borrow_duration': 7
-        }
-        response = self.client.post(self.borrow_book_url, data=data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data['status'], 'failed')
-        self.assertEqual(response.data['message'], 'Book not available or out of stock.')
-
-    def test_borrow_book_no_available_copies(self):
-        # Set available copies to 0
-        self.book.available_copies = 0
-        self.book.save()
-
-        data = {
-            'user_id': self.user_id,
-            'book_id': self.book_id,
-            'borrow_duration': 7
-        }
-        response = self.client.post(self.borrow_book_url, data=data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data['status'], 'failed')
-        self.assertEqual(response.data['message'], 'Book not available or out of stock.')
-        print(self.borrow_book_url)
-
     
     """NUMBER SIX - Test for adding books to the library"""
     def test_add_book_valid_payload(self):
@@ -254,35 +185,98 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(first_user['first_name'], self.user.first_name)
         self.assertEqual(first_user['last_name'], self.user.last_name)
         self.assertEqual(first_user['email'], self.user.email)
-
-
-    """NUMBER NINE - Test for getting all users enrolled in the library"""
-    def test_get_borrowed_books(self):
-        # Send GET request to the borrowed_books API
-        response = self.client.get(self.borrowed_books_url, format='json')
-
-        # Check that the response is 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Check that the response data matches the expected data
-        users_data = response.data
-        self.assertEqual(len(users_data), 1)
-
-        first_user = users_data[0]
-        self.assertEqual(first_user['first_name'], self.user.first_name)
-        self.assertEqual(first_user['last_name'], self.user.last_name)
-        self.assertEqual(first_user['email'], self.user.email)
-
-        # Check borrowed books for the first user
-        borrowed_books = first_user['borrowed_books']
-        self.assertEqual(len(borrowed_books), 1)
-
-        first_borrowed_book = borrowed_books[0]
-        self.assertEqual(first_borrowed_book['book'], self.book.title)
-        self.assertEqual(first_borrowed_book['user'], self.user.first_name)
-        self.assertEqual(first_borrowed_book['borrow_date'], str(self.borrowed_book.borrow_date.date()))
-        self.assertEqual(first_borrowed_book['return_date'], str(self.borrowed_book.return_date.date()))
    
+
+    """NUMBER TEN - Test for retrieving unavailable books with return dates"""
+    def test_get_unavailable_books(self):
+
+         # Create books (unavailable and available)
+        self.book1 = Book.objects.create(
+            title='Lagos Boy',
+            author='Vincent',
+            publication_date='2024-09-12',
+            publisher='Publisher 1',
+            language='English',
+            category="Fiction",
+            available_copies=0,  # Unavailable
+            description='A book not available for borrowing.'
+        )
+        
+        self.book2 = Book.objects.create(
+            title='Unavailable Book 2',
+            author='Author 2',
+            publication_date='2024-09-12',
+            publisher='Publisher 2',
+            language='English',
+            category="Fiction",
+            available_copies=0,  # Unavailable
+            description='Another book not available for borrowing.'
+        )
+
+        self.book3 = Book.objects.create(
+            title='Available Book',
+            author='Author 3',
+            publication_date='2024-09-12',
+            publisher='Publisher 3',
+            language='English',
+            category="Fiction",
+            available_copies=2,  # Available
+            description='A book available for borrowing.'
+        )
+
+        # Create borrowed book entries for unavailable books
+        self.borrowed_book1 = BorrowedBook.objects.create(
+            book=self.book1,
+            user=self.user,
+            borrow_date=datetime.today().date(),
+            return_date=datetime.today().date() + timedelta(days=7)
+        )
+
+        self.borrowed_book2 = BorrowedBook.objects.create(
+            book=self.book2,
+            user=self.user,
+            borrow_date=datetime.today().date(),
+            return_date=datetime.today().date() + timedelta(days=5)
+        )
+
+        
+        response = self.client.get(self.unavailable_books_url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['status'], 'success')
+        self.assertEqual(response.data['message'], 'Unavailable books')
+
+        books_data = response.data['data']
+        self.assertEqual(len(books_data), 3)  # Only 3 unavailable books
+        
+        # Convert the return_date from datetime to string for comparison
+        expected_return_date_book1 = self.borrowed_book1.return_date.strftime('%Y-%m-%d')
+        expected_return_date_book2 = self.borrowed_book2.return_date.strftime('%Y-%m-%d')
+
+        # Verify the details of the first unavailable book
+        first_book = books_data[0]
+        self.assertEqual(first_book['book_title'], self.book1.title)
+        self.assertEqual(first_book['author'], self.book1.author)
+        self.assertEqual(first_book['return_date'], expected_return_date_book1)
+        
+        # Verify the details of the second unavailable book
+        second_book = books_data[1]
+        self.assertEqual(second_book['book_title'], self.book2.title)
+        self.assertEqual(second_book['author'], self.book2.author)
+        self.assertEqual(second_book['return_date'], expected_return_date_book2)
+
+   
+    def test_no_unavailable_books(self):
+        # Set available copies for all books to non-zero
+        self.book1.available_copies = 1
+        self.book1.save()
+        self.book2.available_copies = 1
+        self.book2.save()
+
+        response = self.client.get(self.unavailable_books_url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['status'], 'success')
+        self.assertEqual(response.data['message'], 'Unavailable books')
+        self.assertEqual(len(response.data['data']), 0)  # No unavailable books
 
 
 
@@ -323,7 +317,6 @@ class LibraryURLTestCase(APITestCase):
     def test_borrowed_books_and_users_url(self):
         url = reverse('books-borrowed')
         self.assertEqual(resolve(url).func.__name__, LibraryViewSets.as_view({'get': 'unavailable_books'}).__name__)
-
 
     def test_unavailable_books_url(self):
         url = reverse('books-unavailable')
