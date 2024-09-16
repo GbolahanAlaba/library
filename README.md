@@ -179,6 +179,35 @@ You should now be able to access the application at http://127.0.0.1:8000/.
 
   ```json
 
+  {
+    "status": "success",
+    "message": "Filtered books",
+    "data": [
+        {
+            "book_id": "71d7cc35-e8f6-4b3a-b343-95bf02f54729",
+            "title": "The AI",
+            "author": "Charles",
+            "publication_date": "2024-09-12",
+            "publisher": "Ugo",
+            "language": "English",
+            "category": "Technology",
+            "description": "This is a new book",
+            "available_copies": 10
+        },
+        {
+            "book_id": "754f7b49-0949-4864-b304-908e6da1b918",
+            "title": "Forge",
+            "author": "Benard J",
+            "publication_date": "2024-09-12",
+            "publisher": "Best",
+            "language": "English",
+            "category": "Business",
+            "description": "This is a new book",
+            "available_copies": 8
+        }
+    ]
+  }
+
 
 
 #### POST /borrow-book/
