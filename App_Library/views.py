@@ -138,7 +138,7 @@ class LibraryViewSets(viewsets.ModelViewSet):
     def borrowed_books(self, request):
         queryset = User.objects.all()
         serializer = UserBorrowedBooksSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response({"status": "success", "message": "Borrowed books and users", "data": serializer.data}, status=status.HTTP_200_OK)
 
 
     @handle_exceptions
