@@ -133,8 +133,14 @@ class LibraryViewSets(viewsets.ModelViewSet):
 
         serializer = self.user_serializer_class(users, many=True)
         return Response({"status": "success", "message": "All library users", "data": serializer.data}, status=status.HTTP_201_CREATED)
-
     
+
+    def borrowed_books(self, request):
+        queryset = User.objects.all()
+        serializer = UserBorrowedBooksSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
     @handle_exceptions
     def unavailable_books(self, request, *args, **kwargs):
         unavailable_books = Book.objects.filter(available_copies=0)
@@ -151,13 +157,6 @@ class LibraryViewSets(viewsets.ModelViewSet):
                 })
 
         return Response({"status": "success", "message": "Unavailable books", "data": unavailable_books_with_return_date})
-    
-
-    def borrowed_books(self, request):
-        queryset = User.objects.all()
-        serializer = UserBorrowedBooksSerializer(queryset, many=True)
-        return Response(serializer.data)
-
     
 
 

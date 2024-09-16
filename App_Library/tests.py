@@ -19,6 +19,7 @@ class BookViewSetTestCase(APITestCase):
         self.remove_book_url = lambda book_id: reverse('book-remove', kwargs={'book_id': book_id})
         self.users_url = reverse('library-users')
         self.unavailable_books_url = reverse('books-unavailable')
+        self.borrowed_books_url = reverse('books-borrowed')
 
         self.valid_user_payload = {
             'first_name': 'Gbolahan',
@@ -254,6 +255,33 @@ class BookViewSetTestCase(APITestCase):
         self.assertEqual(first_user['last_name'], self.user.last_name)
         self.assertEqual(first_user['email'], self.user.email)
 
+
+    """NUMBER NINE - Test for getting all users enrolled in the library"""
+    def test_get_borrowed_books(self):
+        # Send GET request to the borrowed_books API
+        response = self.client.get(self.borrowed_books_url, format='json')
+
+        # Check that the response is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Check that the response data matches the expected data
+        users_data = response.data
+        self.assertEqual(len(users_data), 1)
+
+        first_user = users_data[0]
+        self.assertEqual(first_user['first_name'], self.user.first_name)
+        self.assertEqual(first_user['last_name'], self.user.last_name)
+        self.assertEqual(first_user['email'], self.user.email)
+
+        # Check borrowed books for the first user
+        borrowed_books = first_user['borrowed_books']
+        self.assertEqual(len(borrowed_books), 1)
+
+        first_borrowed_book = borrowed_books[0]
+        self.assertEqual(first_borrowed_book['book'], self.book.title)
+        self.assertEqual(first_borrowed_book['user'], self.user.first_name)
+        self.assertEqual(first_borrowed_book['borrow_date'], str(self.borrowed_book.borrow_date.date()))
+        self.assertEqual(first_borrowed_book['return_date'], str(self.borrowed_book.return_date.date()))
    
 
 
