@@ -60,26 +60,19 @@ class LibraryViewSets(viewsets.ModelViewSet):
             return Response({"status": "success", "message": f"{book.title}", "data": serializer.data}, status=status.HTTP_200_OK)
     
 
-    @action(detail=False, methods=['get'], url_path='filter-books')
-    @handle_exceptions
+    # @action(detail=False, methods=['get'], url_path='filter-books')
     def filter_books(self, request, *args, **kwargs):
-        # Get author and category from query params
         author = request.query_params.get('author', None)
         category = request.query_params.get('category', None)
 
-        # Start with all books
         queryset = Book.objects.all()
 
-        # Apply filters if present
         if author:
             queryset = queryset.filter(author__icontains=author)
         if category:
             queryset = queryset.filter(category__icontains=category)
-        
-        # Serialize the filtered queryset
+
         serializer = BookSerializer(queryset, many=True)
-        
-        # Return the response with filtered books
         return Response(
             {"status": "success", "message": "Filtered books", "data": serializer.data},
             status=status.HTTP_200_OK
